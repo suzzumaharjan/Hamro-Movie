@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import MovieCard from "./MovieCard";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchMovie, selectMovies } from "../Redux/movieSlice";
 const BASE_URL = "https://api.themoviedb.org/3";
 
 const MovieContents = () => {
-  const [movieList, setMovieList] = useState([]);
+  const dispatch = useDispatch();
+  const movies = useSelector(selectMovies);
+  // const [movieList, setMovieList] = useState([]);
   const [moviecategory, setMoviecategory] = useState("popular");
 
   function changeList(e) {
@@ -20,17 +24,18 @@ const MovieContents = () => {
           throw new Error("Failed to fetch movies");
         }
         const data = await response.json();
-        setMovieList(data.results);
+        // setMovieList(data.results);
+        
+        dispatch(fetchMovie(data.results));
       } catch (error) {
         console.error("Error fetching movies:", error);
       }
     };
 
     loadMovies();
-  }, [moviecategory]);
-
+  }, [dispatch,moviecategory]);
   return (
-    <div className="movie-container max-w-full">
+    <div className="movie-container">
       <section className="content">
         <div className="categories">
           <button className="active">Movies</button>
@@ -49,8 +54,8 @@ const MovieContents = () => {
             </select>
           </div>
         </div>
-        <div className="movies-grid align-middle">
-          {movieList?.map((item, index) => {
+        <div className="movies-grid">
+          {movies?.map((item, index) => {
             return <MovieCard movies={item} key={item.id} />;
           })}
         </div>

@@ -26,6 +26,7 @@
 }
 
 .content {
+  width: 100%;
   padding: 20px;
 }
 
@@ -248,4 +249,18 @@ footer {
     font-size: 16px;
    
   }
+}
+.author-img{
+  border-radius: 50%;
+}
+/* .review-content{
+max-width: 50%;
+} */
+.author-content{
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  text-overflow: ellipsis;
+           
 }
