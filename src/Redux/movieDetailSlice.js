@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState={
     movies:[],
-    reviews:[]
+    reviews:[],
+    
 }
 const movieDetailSlice = createSlice({
     name: 'moviesdetail',
@@ -14,16 +15,22 @@ const movieDetailSlice = createSlice({
             state.movies=actions.payload;
         },
         fetchmovieReview:(state,actions)=>{
-            state.reviews=actions.payload
-        }
-
         
+            state.reviews=actions.payload
+        },
+    
+
+        saveReview:(state, action) => {
+            state.reviews.push(action.payload);
+        }
   
     },
   })
 
   export default movieDetailSlice.reducer;
-  export const {fetchMovieDetail,fetchmovieReview}=movieDetailSlice.actions;
+  export const {fetchMovieDetail,fetchmovieReview,saveReview}=movieDetailSlice.actions;
   //use for useselector
-  export const selectMoviesDetail = (state) => state.movie.movies;
+  export const selectMoviesDetail = (state) => state.movie.movies
   export const selectReview = (state) => state.reviews.reviews
+
+

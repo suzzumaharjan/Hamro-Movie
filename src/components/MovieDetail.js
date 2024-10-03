@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-
-import { selectMoviesDetail, selectReview } from "../Redux/movieDetailSlice";
-import { fetchMovieDetail, fetchmovieReview } from "../Redux/movieDetailSlice";
+import {
+  fetchMovieDetail,
+  fetchmovieReview,
+  saveReview,
+  selectMoviesDetail,
+  selectReview,
+} from "../Redux/movieDetailSlice";
+import avatar from "../Assests/Images/avatar.jpg";
+// import { selectMoviesDetail, selectReview } from "../Redux/movieDetailSlice";
+// import { fetchMovieDetail, fetchmovieReview } from "../Redux/movieDetailSlice";
 
 const option = { method: "GET", headers: { accept: "application/json" } };
 const MovieDetail = () => {
@@ -11,13 +18,34 @@ const MovieDetail = () => {
   const dispatch = useDispatch();
   const moviedetail = useSelector(selectMoviesDetail);
   const reviewsdata = useSelector(selectReview);
+  const [username, setUsername] = useState("");
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+
+ 
+
   // const [moviedetail, setMovieDetail] = useState([]);
   // const [reviewsdata, setReviewData] = useState([]);
- 
 
   //this code is to filter the id using selector
   // const moviedetail = useSelector((state) => selectMovieById(state, id));
-  // const backgroundImage = `https://image.tmdb.org/t/p/w200${moviedetail.poster_path}`;
+  
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+   
+    const updatedReview = {
+      author: author,
+      author_details: {
+        avatar_path: avatar,
+        username: username
+      },
+      content: content
+    };
+    
+    dispatch(saveReview(updatedReview));
+  };
+  
+
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -39,7 +67,6 @@ const MovieDetail = () => {
 
     loadMovies();
     ReviewData();
-  
   }, [dispatch, id]);
 
   // const moviedetail=useSelector((state)=>getMovieById(state,id));
@@ -52,14 +79,10 @@ const MovieDetail = () => {
     // setReviewData(data.results);
     dispatch(fetchmovieReview(data.results));
   };
- 
-  const postRating = useCallback( async() => {
-    let ratingvalue=document.getElementById('ratingvalue').value;
-    
-  console.log(ratingvalue);
-  
-    
-    const response =await fetch(
+
+  const postRating = useCallback(async () => {
+    let ratingvalue = document.getElementById("ratingvalue").value;
+    const response = await fetch(
       `https://api.themoviedb.org/3/movie/${id}/rating`,
       {
         method: "POST",
@@ -68,13 +91,12 @@ const MovieDetail = () => {
           "Content-Type": "application/json;charset=utf-8",
           Authorization: `Bearer ${process.env.REACT_APP_BEARER_KEY}`,
         },
-       
+
         body: `{"value":${ratingvalue}}`,
       }
     );
-    const data =await response.json();
+    const data = await response.json();
     console.log(data);
-    
   });
 
   return (
@@ -123,7 +145,9 @@ const MovieDetail = () => {
               </select>
             </div>
             <div>
-              <button className="bg-primary" onClick={postRating}>Submit</button>
+              <button className="bg-primary" onClick={postRating}>
+                Submit
+              </button>
             </div>
           </div>
         </div>
@@ -134,18 +158,26 @@ const MovieDetail = () => {
         </div>
 
         {reviewsdata?.map((reviewlist) => (
+          
           <div className="card review-content my-3">
-            <div className="d-flex">
+            <div className="d-flex mx-2 my-2">
               <div>
                 <img
                   className="author-img"
-                  src={`https://media.themoviedb.org/t/p/w45_and_h45_face/${reviewlist.author_details.avatar_path}`}
+                  src={
+                    reviewlist?.author_details?.avatar_path
+                      ? `https://media.themoviedb.org/t/p/w45_and_h45_face/${reviewlist.author_details.avatar_path}`
+                      : avatar
+                  }
                   alt=""
+                  style={{ width: "2.9rem" }}
                 />
               </div>
               <div>
                 <p className="p-2 mx-3">
-                  <strong>{reviewlist.author_details.name}</strong>
+                  <strong>
+                    {reviewlist.author === "" ? "Unknown" : reviewlist.author}
+                  </strong>
                 </p>
               </div>
             </div>
@@ -155,6 +187,62 @@ const MovieDetail = () => {
           </div>
         ))}
       </div>
+      <form
+        style={{ maxWidth: "50rem", margin: "auto" }}
+        onSubmit={handleSubmitForm}
+      >
+        <h1 style={{ textAlign: "center" }}>Review Form</h1>
+        <div className="mb-3 my-3">
+          <label htmlFor="exampleInputEmail1" className="form-label">
+            Name
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="auhtor"
+            value={author}
+            name="author"
+            aria-describedby="emailHelp"
+            onChange={(e) => {
+              setAuthor(e.target.value);
+            }}
+          />
+        </div>
+        <div className="mb-3 my-3">
+          <label htmlFor="exampleInputEmail1" className="form-label">
+            Username
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="username"
+            name="username"
+            aria-describedby="emailHelp"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+          />
+        </div>
+
+        <div className="form-floating my-3">
+          <textarea
+            className="form-control"
+            placeholder="Leave a comment here"
+            id="content"
+            name="content"
+            value={content}
+            style={{ height: "100px", resize: "none" }}
+            onChange={(e) => {
+              setContent(e.target.value);
+            }}
+          ></textarea>
+          <label htmlFor="floatingTextarea2">Comments</label>
+        </div>
+        <button type="submit" className="btn btn-primary">
+          Submit
+        </button>
+      </form>
     </div>
   );
 };

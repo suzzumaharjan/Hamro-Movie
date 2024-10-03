@@ -252,6 +252,7 @@ footer {
 }
 .author-img{
   border-radius: 50%;
+
 }
 /* .review-content{
 max-width: 50%;
@@ -262,5 +263,6 @@ max-width: 50%;
   -webkit-box-orient: vertical;  
   overflow: hidden;
   text-overflow: ellipsis;
+
            
 }

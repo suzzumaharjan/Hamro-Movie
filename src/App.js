@@ -12,6 +12,7 @@ import MovieDetail from './components/MovieDetail';
 
 import Home from './components/Home';
 import MovieContents from './components/MovieContents';
+import ReviewForm from './components/reviewForm';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
       <Route path='/' element={<MovieContents/>}></Route>
         
         <Route exact path='/moviedetail/:id' element={<MovieDetail/>}></Route>
+        <Route path='/reviewform' element={<ReviewForm/>}></Route>
+        
       </Routes>
     </Router>
    </div>
